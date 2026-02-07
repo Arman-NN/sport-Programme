@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="manifest" href="manifest.json">
+    <title>Programme Simple</title>
+    <style>
+        /* --- DESIGN SYSTÈME (Style Apple / Minimal) --- */
+        :root {
+            --bg-color: #ffffff;
+            --text-main: #1c1c1e; /* Noir doux */
+            --text-sec: #8e8e93;  /* Gris Apple */
+            --accent: #000000;    /* Bouton noir comme ChatGPT/Apple */
+            --card-bg: #f2f2f7;   /* Gris clair système */
+            --success: #34c759;   /* Vert iOS */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased; /* Rendu texte net sur iPhone */
+        }
+
+        /* --- Éléments de structure --- */
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            padding: 24px;
+            box-sizing: border-box;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .active { display: flex; }
+
+        /* Centrage vertical pour l'accueil et la fin */
+        .center-content {
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        /* --- Typographie --- */
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 16px 0;
+            letter-spacing: -0.5px;
+        }
+
+        p {
+            color: var(--text-sec);
+            font-size: 17px;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        /* --- Composants --- */
+        .header-tag {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-sec);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Carte image épurée */
+        .visual-area {
+            width: 100%;
+            height: 240px;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .visual-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.9;
+        }
+
+        /* Zone d'infos (Timer/Reps) */
+        .data-row {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centré comme demandé */
+            margin-bottom: 30px;
+        }
+
+        .big-number {
+            font-size: 48px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+
+        .subtitle {
+            font-size: 17px;
+            color: var(--text-sec);
+        }
+
+        /* --- Boutons (Style Apple) --- */
+        .btn {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 12px;
+            width: 100%;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-top: auto; /* Pousse le bouton en bas */
+            margin-bottom: 20px;
+        }
+        
+        .btn:active { opacity: 0.7; }
+
+        /* --- Barre de progression ultra-fine --- */
+        .progress-track {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 4px;
+            background: transparent;
+            z-index: 100;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="progress-track" id="progress-container">
+        <div class="progress-fill" id="progress-bar"></div>
+    </div>
+
+    <div id="home-screen" class="screen center-content active">
+        <div style="font-size: 40px; margin-bottom: 20px;">📝</div>
+        <h1>Programme Sport</h1>
+        <p>Séance guidée • Poids du corps</p>
+        <div style="flex-grow: 1;"></div> <button class="btn" onclick="startSession()">Commencer</button>
+    </div>
+
+    <div id="guided-screen" class="screen">
+        <div id="phase-tag" class="header-tag">PRÉPARATION</div>
+
+        <h2 id="ex-name" style="text-align: center;">Nom Exercice</h2>
+
+        <div class="visual-area" id="ex-img">
+            </div>
+
+        <div class="data-row">
+            <div id="ex-target" class="big-number">--</div>
+            <div id="ex-desc" class="subtitle">Description courte</div>
+        </div>
+
+        <button class="btn" id="action-btn" onclick="nextStep()">Suivant</button>
+    </div>
+
+    <div id="end-screen" class="screen center-content">
+        <div style="font-size: 40px; margin-bottom: 20px;">✅</div>
+        <h1>Séance terminée</h1>
+        <p>Bon travail aujourd'hui.</p>
+        <div style="flex-grow: 1;"></div>
+        <button class="btn" onclick="location.reload()">Fermer</button>
+    </div>
+
+    <script>
+        // --- DONNÉES (Identiques à ta demande) ---
+        
+        const warmup = [
+            { type: 'time', val: 60, name: "Rotations Articulaires", desc: "Nuque, épaules, poignets, chevilles", img: "https://placehold.co/600x400/f2f2f7/000?text=Rotations" },
+            { type: 'time', val: 120, name: "Jumping Jacks", desc: "Rythme constant", img: "jpj.png" },
+            { type: 'reps', val: "15", name: "Squats", desc: "Poids du corps", img: "squat.png" },
+            { type: 'reps', val: "10", name: "Pompes", desc: "Genoux ou classiques", img: "pushUps.png" },
+            { type: 'time', val: 30, name: "Cercles de bras", desc: "Petits et grands cercles", img: "https://placehold.co/600x400/f2f2f7/000?text=Bras" }
+        ];
+
+        const workout = [
+            // ABDOS
+            { cat: "ABDOS", name: "Russian Twist", target: "3 x 20", desc: "sans haltère", img: "rt.png" },
+            { cat: "ABDOS", name: "V-Ups", target: "3 x 12", desc: "Relevé buste & jambes", img: "vUp.png" },
+            { cat: "ABDOS", name: "Leg Raises", target: "3 x 10", desc: "Jambes tendues", img: "legRaise.png" },
+            // EPAULES
+            { cat: "ÉPAULES", name: "Développé Militaire", target: "3 x 10", desc: "Haltères", img: "devMil.png" },
+            { cat: "ÉPAULES", name: "Lateral Raises", target: "4 x 12", desc: "Largeur d'épaule", img: "LatR.png" },
+            { cat: "ÉPAULES", name: "Front Raises", target: "3 x 10", desc: "Avant d'épaule", img: "FR.png" },
+            { cat: "ÉPAULES", name: "Reverse Flys", target: "4 x 12", desc: "Arrière d'épaule", img: "Rf.png" },
+            // BRAS
+            { cat: "BRAS", name: "Biceps Curl", target: "3 x 12", desc: "Classique", img: "BC.png" },
+            { cat: "BRAS", name: "Hammer Curl", target: "3 x 12", desc: "Prise marteau", img: "HC.png" },
+            { cat: "BRAS", name: "Forearm Curl", target: "3 x 12", desc: "Avant-bras intérieur", img: "FC.png" },
+            { cat: "BRAS", name: "Rev. Forearm Curl", target: "3 x 12", desc: "Avant-bras extérieur", img: "RFC.png" },
+            { cat: "BRAS", name: "Ext. Triceps", target: "3 x 12", desc: "Derrière la tête", img: "ET.png" },
+            // DOS
+            { cat: "DOS", name: "Rowing Penché", target: "4 x 12", desc: "2 Haltères", img: "RP.png" },
+            { cat: "DOS", name: "Pull-Over", target: "3 x 12", desc: "Haltère hauteur", img: "POj.jpeg" },
+            { cat: "DOS", name: "Rowing 1 Bras", target: "3 x 10", desc: "Par bras", img: "R1B.png" },
+            // JAMBES
+            { cat: "JAMBES", name: "Goblet Squat", target: "4 x 12", desc: "Haltère poitrine", img: "GS.png" },
+            { cat: "JAMBES", name: "Fentes", target: "3 x 10", desc: "Par jambe", img: "F.png" },
+            { cat: "JAMBES", name: "SDT Jambes Tendues", target: "3 x 12", desc: "Chaîne postérieure", img: "SDTJT.jpg" }
+        ];
+
+        // --- LOGIQUE (Moteur) ---
+        
+        let allSteps = []; 
+        let currentIdx = 0;
+        let timerInt = null;
+        let timeLeft = 0;
+
+        function startSession() {
+            // Création de la liste plate
+            const p1 = warmup.map(w => ({
+                phase: "ÉCHAUFFEMENT",
+                name: w.name,
+                target: w.type === 'time' ? w.val : w.val + " Reps",
+                isTimer: w.type === 'time',
+                rawTime: w.val, // Pour le reset du timer
+                desc: w.desc,
+                img: w.img
+            }));
+
+            const p2 = workout.map(w => ({
+                phase: w.cat,
+                name: w.name,
+                target: w.target,
+                isTimer: false,
+                desc: w.desc,
+                img: w.img
+            }));
+
+            allSteps = [...p1, ...p2];
+            currentIdx = 0;
+
+            document.getElementById('home-screen').classList.remove('active');
+            document.getElementById('guided-screen').classList.add('active');
+            loadStep();
+        }
+
+        function loadStep() {
+            const step = allSteps[currentIdx];
+            const btn = document.getElementById('action-btn');
+            const targetDisplay = document.getElementById('ex-target');
+
+            // Textes
+            document.getElementById('phase-tag').innerText = step.phase;
+            document.getElementById('ex-name').innerText = step.name;
+            document.getElementById('ex-desc').innerText = step.desc;
+            
+            // Image (si tu en as, sinon garde le gris propre)
+            document.getElementById('ex-img').innerHTML = `<img src="${step.img}" alt="${step.name}">`;
+
+            // Reset
+            clearInterval(timerInt);
+            timerInt = null;
+            targetDisplay.style.color = "var(--text-main)";
+
+            if (step.isTimer) {
+                // Minuteur
+                timeLeft = step.rawTime;
+                updateTimeDisplay();
+                btn.innerText = "Lancer le chrono";
+                btn.onclick = startTimerLogic;
+                btn.style.backgroundColor = "var(--accent)";
+            } else {
+                // Répétitions
+                targetDisplay.innerText = step.target;
+                btn.innerText = "Suivant";
+                btn.onclick = nextStep;
+                btn.style.backgroundColor = "var(--accent)";
+            }
+
+            // Progression
+            const pct = (currentIdx / allSteps.length) * 100;
+            document.getElementById('progress-bar').style.width = pct + "%";
+        }
+
+        function startTimerLogic() {
+            const btn = document.getElementById('action-btn');
+            
+            if(timerInt === "done") {
+                nextStep();
+                return;
+            }
+            
+            if(timerInt) { // Si on clique alors que ça tourne -> Pause ou Skip ? Ici on Skip
+                nextStep(); 
+                return;
+            }
+
+            btn.innerText = "Passer";
+            btn.style.backgroundColor = "var(--text-sec)"; // Gris pendant que ça tourne
+
+            timerInt = setInterval(() => {
+                timeLeft--;
+                updateTimeDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInt);
+                    if(navigator.vibrate) navigator.vibrate([200]);
+                    
+                    document.getElementById('ex-target').innerText = "✓";
+                    document.getElementById('ex-target').style.color = "var(--success)";
+                    
+                    btn.innerText = "Continuer";
+                    btn.style.backgroundColor = "var(--success)"; // Vert quand fini
+                    timerInt = "done";
+                }
+            }, 1000);
+        }
+
+        function updateTimeDisplay() {
+            const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+            const s = (timeLeft % 60).toString().padStart(2, '0');
+            document.getElementById('ex-target').innerText = `${m}:${s}`;
+        }
+
+        function nextStep() {
+            currentIdx++;
+            if (currentIdx < allSteps.length) {
+                loadStep();
+            } else {
+                document.getElementById('guided-screen').classList.remove('active');
+                document.getElementById('end-screen').classList.add('active');
+                document.getElementById('progress-bar').style.width = "100%";
+            }
+        }
+    </script>
+</body>
+</html>
