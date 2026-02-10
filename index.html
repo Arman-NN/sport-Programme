@@ -3,128 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus Flow PWA</title>
+    <title>Focus Flow Pro</title>
     <style>
         :root {
-            --bg-color: #f3f3f3;
-            --card-bg: #ffffff;
-            --accent-color: #0078d4;
-            --text-color: #323130;
+            --bg: #f3f2f1;
+            --card: #ffffff;
+            --accent: #0078d4;
+            --text: #201f1e;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg);
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
         }
 
-        /* Grille adaptative */
-        .container {
+        /* GRILLE PRINCIPALE (Type Windows 11) */
+        .dashboard {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* 2 colonnes sur PC */
+            grid-template-columns: 1.2fr 1fr; /* Colonne gauche plus large */
             grid-template-rows: auto auto;
-            gap: 20px;
-            max-width: 1000px;
+            gap: 15px;
+            max-width: 1200px;
             width: 100%;
         }
 
         .card {
-            background: var(--card-bg);
-            border-radius: 8px;
+            background: var(--card);
+            border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        /* BLOC GAUCHE : MINUTEUR */
+        .timer-container {
+            grid-row: span 2;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            min-height: 400px;
         }
 
-        /* Minuteur (Grand bloc à gauche) */
-        .timer-section {
-            grid-row: span 2; /* Prend toute la hauteur à gauche */
-        }
-
-        .timer-circle {
-            width: 200px;
-            height: 200px;
-            border: 10px solid #eee;
-            border-top: 10px solid var(--accent-color);
+        .circle {
+            width: 250px;
+            height: 250px;
             border-radius: 50%;
+            border: 8px solid #edebe9;
+            border-top: 8px solid var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            font-weight: bold;
+            font-size: 4rem;
+            font-weight: 600;
             margin: 20px 0;
         }
 
-        /* Sections de droite */
-        .task-section, .spotify-section {
-            width: 100%;
+        /* BLOC HAUT DROITE : PROGRÈS */
+        .progress-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            text-align: center;
         }
 
-        iframe {
-            border-radius: 12px;
-            border: none;
-            width: 100%;
+        .stat-value { font-size: 1.5rem; font-weight: bold; display: block; }
+        .stat-label { font-size: 0.8rem; color: #605e5c; }
+
+        /* BLOC BAS DROITE : SPOTIFY */
+        .spotify-container {
+            display: flex;
+            flex-direction: column;
         }
 
-        /* RESPONSIVE : Sur téléphone, on met tout sur une seule colonne */
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            .timer-section {
-                grid-row: span 1;
-            }
+        /* RESPONSIVE IPAD / MOBILE */
+        @media (max-width: 900px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .timer-container { grid-row: span 1; min-height: auto; }
         }
 
         button {
-            background: var(--accent-color);
+            background: var(--accent);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
+            padding: 12px 30px;
+            border-radius: 20px;
             cursor: pointer;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="card timer-section">
-        <h3>Période de concentration</h3>
-        <div class="timer-circle">25:00</div>
-        <button onclick="startTimer()">Démarrer</button>
+<div class="dashboard">
+    <div class="card timer-container">
+        <h2 style="margin-top:0">Période de concentration</h2>
+        <div class="circle">25:00</div>
+        <button>Démarrer la session</button>
     </div>
 
-    <div class="card spotify-section">
-        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWZeKzbUnY3Yv?utm_source=generator" 
-                height="152" frameBorder="0" allowfullscreen="" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy">
-        </iframe>
-    </div>
-
-    <div class="card task-section">
-        <h3>Google Tasks</h3>
-        <div style="width: 100%; text-align: left;">
-            <input type="checkbox"> Lire mes mails<br>
-            <input type="checkbox"> Finir le projet HTML<br>
-            <p style="font-size: 0.8rem; color: gray;">(Nécessite connexion API Google)</p>
+    <div class="card">
+        <h3 style="margin-top:0">Progrès quotidien</h3>
+        <div class="progress-card">
+            <div><span class="stat-value">0</span><span class="stat-label">Hier</span></div>
+            <div style="border-left: 1px solid #ddd; border-right: 1px solid #ddd;">
+                <span class="stat-value">1h</span><span class="stat-label">Objectif</span>
+            </div>
+            <div><span class="stat-value">0</span><span class="stat-label">Trace</span></div>
         </div>
+    </div>
+
+    <div class="card spotify-container">
+        <h3 style="margin-top:0">Spotify</h3>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0Ex7v?utm_source=generator&theme=0" 
+                width="100%" height="180" frameBorder="0" allowfullscreen="" 
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
 </div>
 
-<script>
-    function startTimer() {
-        alert("Le chrono se lancerait ici !");
-    }
-</script>
-
 </body>
 </html>
-
