@@ -3,124 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Focus Flow Pro</title>
+    <title>CyberFocus PWA</title>
     <style>
         :root {
-            --bg: #f3f2f1;
-            --card: #ffffff;
-            --accent: #0078d4;
-            --text: #201f1e;
+            --neon-blue: #00f2ff;
+            --neon-pink: #ff00e5;
+            --bg-dark: #0a0b10;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
+            background: radial-gradient(circle at center, #1a1b26 0%, #0a0b10 100%);
+            color: white;
+            font-family: 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 20px;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
-        /* GRILLE PRINCIPALE (Type Windows 11) */
+        /* Layout Principal */
         .dashboard {
             display: grid;
-            grid-template-columns: 1.2fr 1fr; /* Colonne gauche plus large */
+            grid-template-columns: 1.2fr 1fr;
             grid-template-rows: auto auto;
-            gap: 15px;
-            max-width: 1200px;
+            gap: 25px;
+            max-width: 1100px;
             width: 100%;
         }
 
+        /* Style des Cartes (Effet Verre) */
         .card {
-            background: var(--card);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
         }
 
-        /* BLOC GAUCHE : MINUTEUR */
-        .timer-container {
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
+        }
+
+        /* SECTION MINUTEUR */
+        .timer-section {
             grid-row: span 2;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 400px;
-        }
-
-        .circle {
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            border: 8px solid #edebe9;
-            border-top: 8px solid var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-            font-weight: 600;
-            margin: 20px 0;
-        }
-
-        /* BLOC HAUT DROITE : PROGRÈS */
-        .progress-card {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
             text-align: center;
         }
 
-        .stat-value { font-size: 1.5rem; font-weight: bold; display: block; }
-        .stat-label { font-size: 0.8rem; color: #605e5c; }
+        .timer-display {
+            font-size: 5rem;
+            font-weight: 800;
+            text-shadow: 0 0 20px var(--neon-blue);
+            margin: 20px 0;
+            font-variant-numeric: tabular-nums;
+        }
 
-        /* BLOC BAS DROITE : SPOTIFY */
-        .spotify-container {
+        .timer-circle {
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            border: 4px solid var(--glass-border);
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: inset 0 0 50px rgba(0, 242, 255, 0.1), 0 0 30px rgba(0, 242, 255, 0.1);
         }
 
-        /* RESPONSIVE IPAD / MOBILE */
-        @media (max-width: 900px) {
-            .dashboard { grid-template-columns: 1fr; }
-            .timer-container { grid-row: span 1; min-height: auto; }
-        }
-
-        button {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 20px;
+        /* BOUTONS NÉON */
+        .btn-neon {
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 12px 40px;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
             cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+
+        .btn-neon:hover {
+            background: var(--neon-blue);
+            color: var(--bg-dark);
+            box-shadow: 0 0 30px var(--neon-blue);
+        }
+
+        /* STATS & PROGRÈS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item { text-align: center; }
+        .stat-val { display: block; font-size: 1.4rem; font-weight: bold; color: var(--neon-pink); }
+        .stat-label { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
+
+        /* SPOTIFY */
+        .spotify-frame {
+            border-radius: 15px;
+            margin-top: 15px;
+            background: black;
+        }
+
+        /* RESPONSIVE IPAD & MOBILE */
+        @media (max-width: 950px) {
+            .dashboard { grid-template-columns: 1fr; }
+            .timer-section { grid-row: span 1; padding: 50px 20px; }
+            .timer-circle { width: 220px; height: 220px; }
+            .timer-display { font-size: 3.5rem; }
         }
     </style>
 </head>
 <body>
 
 <div class="dashboard">
-    <div class="card timer-container">
-        <h2 style="margin-top:0">Période de concentration</h2>
-        <div class="circle">25:00</div>
-        <button>Démarrer la session</button>
+    <div class="card timer-section">
+        <h2 style="color: var(--neon-blue); letter-spacing: 2px;">FOCUS CORE</h2>
+        <div class="timer-circle">
+            <div class="timer-display" id="time">25:00</div>
+        </div>
+        <p style="color: #888; margin-bottom: 25px;">SESSION 1 / 4</p>
+        <button class="btn-neon" onclick="start()">Initialiser</button>
     </div>
 
     <div class="card">
-        <h3 style="margin-top:0">Progrès quotidien</h3>
-        <div class="progress-card">
-            <div><span class="stat-value">0</span><span class="stat-label">Hier</span></div>
-            <div style="border-left: 1px solid #ddd; border-right: 1px solid #ddd;">
-                <span class="stat-value">1h</span><span class="stat-label">Objectif</span>
+        <h3 style="margin:0; font-size: 1rem; color: var(--neon-pink);">ANALYSE DE PROGRESSION</h3>
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-val">0m</span>
+                <span class="stat-label">Hier</span>
             </div>
-            <div><span class="stat-value">0</span><span class="stat-label">Trace</span></div>
+            <div class="stat-item" style="border-left: 1px solid var(--glass-border); border-right: 1px solid var(--glass-border);">
+                <span class="stat-val">2h</span>
+                <span class="stat-label">Objectif</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-val">0j</span>
+                <span class="stat-label">Série</span>
+            </div>
         </div>
     </div>
 
-    <div class="card spotify-container">
-        <h3 style="margin-top:0">Spotify</h3>
-        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0Ex7v?utm_source=generator&theme=0" 
-                width="100%" height="180" frameBorder="0" allowfullscreen="" 
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+    <div class="card">
+        <h3 style="margin:0 0 10px 0; font-size: 1rem;">FLUX AUDIO SYNTHWAVE</h3>
+        <iframe class="spotify-frame" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRvuiSEx7X?utm_source=generator&theme=0" 
+                width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
 </div>
+
+<script>
+    function start() {
+        alert("Système Focus activé !");
+    }
+</script>
 
 </body>
 </html>
