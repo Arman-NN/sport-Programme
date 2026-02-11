@@ -3,175 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberFocus PWA</title>
+    <title>ZenFocus Studio</title>
     <style>
         :root {
-            --neon-blue: #00f2ff;
-            --neon-pink: #ff00e5;
-            --bg-dark: #0a0b10;
-            --glass: rgba(255, 255, 255, 0.05);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg: #f8f9fa;
+            --text: #2d3436;
+            --accent: #6c5ce7; /* Un beau violet doux */
+            --card-bg: #ffffff;
         }
 
         body {
-            background: radial-gradient(circle at center, #1a1b26 0%, #0a0b10 100%);
-            color: white;
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, sans-serif;
             margin: 0;
-            min-height: 100vh;
+            padding: 20px;
             display: flex;
             justify-content: center;
-            align-items: center;
-            padding: 20px;
         }
 
-        /* Layout Principal */
-        .dashboard {
+        .container {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            grid-template-rows: auto auto;
+            grid-template-columns: 1.5fr 1fr;
             gap: 25px;
-            max-width: 1100px;
+            max-width: 1200px;
             width: 100%;
         }
 
-        /* Style des Cartes (Effet Verre) */
         .card {
-            background: var(--glass);
-            backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            position: relative;
-            overflow: hidden;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
         }
 
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--neon-blue), transparent);
-        }
-
-        /* SECTION MINUTEUR */
-        .timer-section {
+        /* TIMER MINIMALISTE */
+        .timer-box {
             grid-row: span 2;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            text-align: center;
         }
 
-        .timer-display {
-            font-size: 5rem;
-            font-weight: 800;
-            text-shadow: 0 0 20px var(--neon-blue);
+        #timer-display {
+            font-size: 6rem;
+            font-weight: 200;
             margin: 20px 0;
-            font-variant-numeric: tabular-nums;
+            color: var(--accent);
         }
 
-        .timer-circle {
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            border: 4px solid var(--glass-border);
+        /* GOOGLE TASKS BOX */
+        .tasks-box {
+            min-height: 250px;
+        }
+
+        .task-item {
             display: flex;
             align-items: center;
-            justify-content: center;
-            position: relative;
-            box-shadow: inset 0 0 50px rgba(0, 242, 255, 0.1), 0 0 30px rgba(0, 242, 255, 0.1);
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        /* BOUTONS NÉON */
-        .btn-neon {
-            background: transparent;
-            border: 2px solid var(--neon-blue);
-            color: var(--neon-blue);
-            padding: 12px 40px;
-            border-radius: 50px;
-            font-weight: bold;
-            text-transform: uppercase;
+        /* BOUTON GOOGLE */
+        .btn-google {
+            background: #4285F4;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
             cursor: pointer;
-            transition: 0.3s;
-            box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+            font-size: 0.8rem;
         }
 
-        .btn-neon:hover {
-            background: var(--neon-blue);
-            color: var(--bg-dark);
-            box-shadow: 0 0 30px var(--neon-blue);
-        }
-
-        /* STATS & PROGRÈS */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .stat-item { text-align: center; }
-        .stat-val { display: block; font-size: 1.4rem; font-weight: bold; color: var(--neon-pink); }
-        .stat-label { font-size: 0.7rem; color: #aaa; text-transform: uppercase; }
-
-        /* SPOTIFY */
-        .spotify-frame {
-            border-radius: 15px;
+        /* FONCTIONNALITÉ PLUS : AMBIANCE */
+        .ambient-sounds {
+            display: flex;
+            gap: 10px;
             margin-top: 15px;
-            background: black;
         }
 
-        /* RESPONSIVE IPAD & MOBILE */
-        @media (max-width: 950px) {
-            .dashboard { grid-template-columns: 1fr; }
-            .timer-section { grid-row: span 1; padding: 50px 20px; }
-            .timer-circle { width: 220px; height: 220px; }
-            .timer-display { font-size: 3.5rem; }
+        .sound-btn {
+            background: #eee;
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-<div class="dashboard">
-    <div class="card timer-section">
-        <h2 style="color: var(--neon-blue); letter-spacing: 2px;">FOCUS CORE</h2>
-        <div class="timer-circle">
-            <div class="timer-display" id="time">25:00</div>
+<div class="container">
+    <div class="card timer-box">
+        <h2 style="font-weight: 400;">Focus</h2>
+        <div id="timer-display">25:00</div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="toggleTimer()" id="playBtn" style="background:var(--accent); color:white; border:none; padding:12px 30px; border-radius:30px; cursor:pointer;">Démarrer</button>
+            <button onclick="resetTimer()" style="background:none; border:1px solid #ccc; padding:12px 20px; border-radius:30px; cursor:pointer;">Réinitialiser</button>
         </div>
-        <p style="color: #888; margin-bottom: 25px;">SESSION 1 / 4</p>
-        <button class="btn-neon" onclick="start()">Initialiser</button>
+        
+        <div class="ambient-sounds">
+            <button class="sound-btn" onclick="playNoise('rain')">🌧️</button>
+            <button class="sound-btn" onclick="playNoise('fire')">🔥</button>
+            <button class="sound-btn" onclick="playNoise('cafe')">☕</button>
+        </div>
     </div>
 
-    <div class="card">
-        <h3 style="margin:0; font-size: 1rem; color: var(--neon-pink);">ANALYSE DE PROGRESSION</h3>
-        <div class="stats-grid">
-            <div class="stat-item">
-                <span class="stat-val">0m</span>
-                <span class="stat-label">Hier</span>
-            </div>
-            <div class="stat-item" style="border-left: 1px solid var(--glass-border); border-right: 1px solid var(--glass-border);">
-                <span class="stat-val">2h</span>
-                <span class="stat-label">Objectif</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-val">0j</span>
-                <span class="stat-label">Série</span>
-            </div>
+    <div class="card tasks-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h3 style="margin:0;">Google Tasks</h3>
+            <button class="btn-google" id="auth_btn">Connexion Google</button>
+        </div>
+        <div id="tasks-container">
+            <p style="color:gray; font-size:0.9rem;">Connectez-vous pour synchroniser vos listes.</p>
         </div>
     </div>
 
     <div class="card">
-        <h3 style="margin:0 0 10px 0; font-size: 1rem;">FLUX AUDIO SYNTHWAVE</h3>
-        <iframe class="spotify-frame" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRvuiSEx7X?utm_source=generator&theme=0" 
-                width="100%" height="152" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+        <h3 style="margin-top:0; font-size: 1rem;">Spotify Focus</h3>
+        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExYv?utm_source=generator&theme=0" 
+                width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
 </div>
 
 <script>
-    function start() {
-        alert("Système Focus activé !");
+    // Logique simple du Timer
+    let timeLeft = 1500;
+    let timerId = null;
+
+    function updateDisplay() {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        document.getElementById('timer-display').textContent = 
+            `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function toggleTimer() {
+        if (timerId) {
+            clearInterval(timerId);
+            timerId = null;
+            document.getElementById('playBtn').textContent = "Reprendre";
+        } else {
+            timerId = setInterval(() => {
+                timeLeft--;
+                updateDisplay();
+                if (timeLeft <= 0) clearInterval(timerId);
+            }, 1000);
+            document.getElementById('playBtn').textContent = "Pause";
+        }
+    }
+
+    function resetTimer() {
+        clearInterval(timerId);
+        timerId = null;
+        timeLeft = 1500;
+        updateDisplay();
+        document.getElementById('playBtn').textContent = "Démarrer";
     }
 </script>
 
